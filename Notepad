@@ -1,0 +1,40 @@
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+
+# For visualization
+import matplotlib.pyplot as plt
+import seaborn as sb
+
+%matplotlib inline
+
+# Loading Dataset
+wh = pd.read_csv('Desktop/weight-height.csv')
+wh.head()
+
+print('Our Data has {} samples.'.format(wh.shape[0]))
+
+
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X = wh.iloc[:, [1, 2]].values
+y = wh.iloc[:, 0].values
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+
+from sklearn.svm import SVC
+clf = make_pipeline(StandardScaler(), SVC(gamma='auto', probability = True))
+clf.fit(X_train, y_train)
+
+# Let's visualize the dataset
+plt.figure(figsize = (10, 8))
+sb.relplot(x = 'Height', y = 'Weight', data = wh, hue = 'Gender')
+plt.show()
+
+clf.score(X_train, y_train)
+
+clf.score(X_test, y_test)
+
+clf.predict_proba([[64, 152]])
